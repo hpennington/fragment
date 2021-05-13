@@ -1,27 +1,67 @@
 #include <iostream>
+#include <random>
 #include <GLFW/glfw3.h>
 #include "glad/glad.h"
 #include <OpenGL/gl.h>
 #include "linmath.h"
 
+static const int num_vertices = 36;
 static const struct {
-    float x, y;
-    float r, g, b;
-} vertices[3] = {
-    { -1.0f, -0.0f, 1.f, 0.f, 0.f },
-    {  0.5f, -0.5f, 0.f, 1.f, 0.f },
-    {  -0.0f, 0.5f, 0.f, 0.f, 1.f },
+    float x, y, z, r, g, b;
+} vertices[num_vertices] = {
+    // Front 
+    {  0.75f,  0.75f, 0.75f, 1.f, 0.f, 0.f },
+    {  0.75f, -0.75f, 0.75f, 1.f, 0.f, 0.f },
+    { -0.75f,  0.75f, 0.75f, 1.f, 0.f, 0.f },
+    {  0.75f, -0.75f, 0.75f, 1.f, 0.f, 0.f },
+    { -0.75f, -0.75f, 0.75f, 1.f, 0.f, 0.f },
+    { -0.75f,  0.75f, 0.75f, 1.f, 0.f, 0.f },
+    // Back
+    {  0.75f,  0.75f, -0.75f, 1.f, 1.f, 0.f },
+    {  0.75f, -0.75f, -0.75f, 1.f, 1.f, 0.f },
+    { -0.75f,  0.75f, -0.75f, 1.f, 1.f, 0.f },
+    {  0.75f, -0.75f, -0.75f, 1.f, 1.f, 0.f },
+    { -0.75f, -0.75f, -0.75f, 1.f, 1.f, 0.f },
+    { -0.75f,  0.75f, -0.75f, 1.f, 1.f, 0.f },
+    // Top
+    {  0.75f,  0.75f, 0.75f, 1.f, 1.f, 1.f },
+    {  0.75f, 0.75f, -0.75f, 1.f, 1.f, 1.f },
+    { -0.75f,  0.75f, 0.75f, 1.f, 1.f, 1.f },
+    {  -0.75f,  0.75f, 0.75f, 1.f, 1.f, 1.f },
+    {  -0.75f, 0.75f, -0.75f, 1.f, 1.f, 1.f },
+    { 0.75f,  0.75f, -0.75f, 1.f, 1.f, 1.f },
+    // Bottom
+    {  0.75f,  -0.75f, 0.75f, 0.f, 1.f, 1.f },
+    {  0.75f, -0.75f, -0.75f, 0.f, 1.f, 1.f },
+    { -0.75f,  -0.75f, 0.75f, 0.f, 1.f, 1.f },
+    {  -0.75f,  -0.75f, 0.75f, 0.f, 1.f, 1.f },
+    {  -0.75f, -0.75f, -0.75f, 0.f, 1.f, 1.f },
+    { 0.75f,  -0.75f, -0.75f, 0.f, 1.f, 1.f },
+    // Left
+    { -0.75f, 0.75f, 0.75f, 0.5f, 1.f, 1.f },
+    { -0.75f, 0.75f, -0.75f, 0.5f, 1.f, 1.f },
+    { -0.75f,  -0.75f, 0.75f, 0.5f, 1.f, 1.f },
+    { -0.75f,  -0.75f, 0.75f, 0.5f, 1.f, 1.f },
+    { -0.75f, -0.75f, -0.75f, 0.5f, 1.f, 1.f },
+    { -0.75f,  0.75f, -0.75f, 0.5f, 1.f, 1.f },
+    // Right
+    { 0.75f, 0.75f, 0.75f, 0.25f, 1.f, 1.f },
+    { 0.75f, 0.75f, -0.75f, 0.25f, 1.f, 1.f },
+    { 0.75f,  -0.75f, 0.75f, 0.25f, 1.f, 1.f },
+    { 0.75f,  -0.75f, 0.75f, 0.25f, 1.f, 1.f },
+    { 0.75f, -0.75f, -0.75f, 0.25f, 1.f, 1.f },
+    { 0.75f,  0.75f, -0.75f, 0.25f, 1.f, 1.f },
 };
- 
+
 static const char* vertex_shader_text =
 "#version 110\n"
 "uniform mat4 MVP;\n"
 "attribute vec3 vCol;\n"
-"attribute vec2 vPos;\n"
+"attribute vec3 vPos;\n"
 "varying vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
+"    gl_Position = MVP * vec4(vPos, 1.0);\n"
 "    color = vCol;\n"
 "}\n";
  
@@ -84,18 +124,25 @@ int main() {
     vcol_location = glGetAttribLocation(program, "vCol");
  
     glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
+    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE,
                           sizeof(vertices[0]), (void*) 0);
     glEnableVertexAttribArray(vcol_location);
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(vertices[0]), (void*) (sizeof(float) * 2));
- 
+                          sizeof(vertices[0]), (void*) (sizeof(float) * 3));
 
     while (!glfwWindowShouldClose(window)) {
 
         float ratio;
         int width, height;
+
         mat4x4 m, p, mvp;
+
+        // Enable depth test
+        glEnable(GL_DEPTH_TEST);
+        // Accept fragment if it closer to the camera than the former one
+        glDepthFunc(GL_LESS);
+        // Clear the screen
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
  
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
@@ -105,12 +152,13 @@ int main() {
  
         mat4x4_identity(m);
         mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        mat4x4_rotate_Y(m, m, (float) glfwGetTime());
+        mat4x4_ortho(p, -ratio, ratio, -2.f, 2.f, 2.f, -2.f);
         mat4x4_mul(mvp, p, m);
  
         glUseProgram(program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, num_vertices);
 
         glfwSwapBuffers(window);
         glfwPollEvents();  

@@ -12,6 +12,7 @@ set(CMAKE_CXX_VERSION 11)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GL_SILENCE_DEPRECATION)
 add_subdirectory(./glfw)
 target_link_libraries(Fragment glfw)
 
