@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_COMPILER clang++)
 
 # set the project name
 project(Fragment)
@@ -6,13 +8,11 @@ project(Fragment)
 # add the executable
 add_executable(Fragment main.cpp glad/glad.c)
 
-set(CMAKE_CXX_VERSION 11)
 
 # GLFW3
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GL_SILENCE_DEPRECATION)
 add_subdirectory(./glfw)
 target_link_libraries(Fragment glfw)
 

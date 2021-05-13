@@ -1,56 +1,25 @@
 #include <iostream>
+#include <vector>
 #include <random>
 #include <GLFW/glfw3.h>
 #include "glad/glad.h"
 #include <OpenGL/gl.h>
 #include "linmath.h"
 
-static const int num_vertices = 36;
-static const struct {
+struct Vertex {
     float x, y, z, r, g, b;
-} vertices[num_vertices] = {
-    // Front 
-    {  0.75f,  0.75f, 0.75f, 1.f, 0.f, 0.f },
-    {  0.75f, -0.75f, 0.75f, 1.f, 0.f, 0.f },
-    { -0.75f,  0.75f, 0.75f, 1.f, 0.f, 0.f },
-    {  0.75f, -0.75f, 0.75f, 1.f, 0.f, 0.f },
-    { -0.75f, -0.75f, 0.75f, 1.f, 0.f, 0.f },
-    { -0.75f,  0.75f, 0.75f, 1.f, 0.f, 0.f },
-    // Back
-    {  0.75f,  0.75f, -0.75f, 1.f, 1.f, 0.f },
-    {  0.75f, -0.75f, -0.75f, 1.f, 1.f, 0.f },
-    { -0.75f,  0.75f, -0.75f, 1.f, 1.f, 0.f },
-    {  0.75f, -0.75f, -0.75f, 1.f, 1.f, 0.f },
-    { -0.75f, -0.75f, -0.75f, 1.f, 1.f, 0.f },
-    { -0.75f,  0.75f, -0.75f, 1.f, 1.f, 0.f },
-    // Top
-    {  0.75f,  0.75f, 0.75f, 1.f, 1.f, 1.f },
-    {  0.75f, 0.75f, -0.75f, 1.f, 1.f, 1.f },
-    { -0.75f,  0.75f, 0.75f, 1.f, 1.f, 1.f },
-    {  -0.75f,  0.75f, 0.75f, 1.f, 1.f, 1.f },
-    {  -0.75f, 0.75f, -0.75f, 1.f, 1.f, 1.f },
-    { 0.75f,  0.75f, -0.75f, 1.f, 1.f, 1.f },
-    // Bottom
-    {  0.75f,  -0.75f, 0.75f, 0.f, 1.f, 1.f },
-    {  0.75f, -0.75f, -0.75f, 0.f, 1.f, 1.f },
-    { -0.75f,  -0.75f, 0.75f, 0.f, 1.f, 1.f },
-    {  -0.75f,  -0.75f, 0.75f, 0.f, 1.f, 1.f },
-    {  -0.75f, -0.75f, -0.75f, 0.f, 1.f, 1.f },
-    { 0.75f,  -0.75f, -0.75f, 0.f, 1.f, 1.f },
-    // Left
-    { -0.75f, 0.75f, 0.75f, 0.5f, 1.f, 1.f },
-    { -0.75f, 0.75f, -0.75f, 0.5f, 1.f, 1.f },
-    { -0.75f,  -0.75f, 0.75f, 0.5f, 1.f, 1.f },
-    { -0.75f,  -0.75f, 0.75f, 0.5f, 1.f, 1.f },
-    { -0.75f, -0.75f, -0.75f, 0.5f, 1.f, 1.f },
-    { -0.75f,  0.75f, -0.75f, 0.5f, 1.f, 1.f },
-    // Right
-    { 0.75f, 0.75f, 0.75f, 0.25f, 1.f, 1.f },
-    { 0.75f, 0.75f, -0.75f, 0.25f, 1.f, 1.f },
-    { 0.75f,  -0.75f, 0.75f, 0.25f, 1.f, 1.f },
-    { 0.75f,  -0.75f, 0.75f, 0.25f, 1.f, 1.f },
-    { 0.75f, -0.75f, -0.75f, 0.25f, 1.f, 1.f },
-    { 0.75f,  0.75f, -0.75f, 0.25f, 1.f, 1.f },
+};
+
+struct RectSize {
+    float x, y, z;
+};
+
+struct Origin {
+    float x, y, z;
+};
+
+struct Color {
+    float r, g, b;
 };
 
 static const char* vertex_shader_text =
@@ -73,9 +42,65 @@ static const char* fragment_shader_text =
 "    gl_FragColor = vec4(color, 1.0);\n"
 "}\n";
  
-
 void error_callback(int error, const char* description) {
     fprintf(stderr, "Error: %s\n", description);
+    std::cout << description << std::endl;
+}
+
+float random_float(float min, float max) {
+    std::random_device rd;  //Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+    std::uniform_real_distribution<> dis(min, max);
+    return (float)dis(gen);
+}
+
+std::vector<Vertex> create_rectangle(RectSize size, Origin origin, Color color) {
+    std::vector<Vertex> vertices = {
+        // Front
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        // Back
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        // Top
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        // Bottom
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        // Left
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        // Right
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+        {  origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b },
+    };
+
+    return vertices;
 }
 
 int main() {
@@ -84,6 +109,9 @@ int main() {
     if (!glfwInit()) {
         std::cout << "Failed to initizlize GLFW3" << std::endl;
     }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
     // Create window
     GLFWwindow *window = glfwCreateWindow(640, 480, "Fragment", NULL, NULL);
@@ -99,12 +127,29 @@ int main() {
         return -1;
     }
 
+    glEnable(GL_DEBUG_OUTPUT);
+    std::cout << glGetString(GL_VERSION) << std::endl;
+
+    std::vector<Vertex> vertices = {};
+    const int num_cubes = 10;
+    for (int cube_index = 0; cube_index < num_cubes; cube_index += 1) {
+
+        RectSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
+        Origin origin = {random_float(-0.9, 0.9), random_float(-0.9, 0.9), random_float(-0.9, 0.9)};
+        Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
+        std::vector<Vertex> rect = create_rectangle(size, origin, color);
+        
+        for (int i = 0; i < rect.size(); i += 1) {
+            vertices.push_back(rect[i]);
+        }
+    }
+    
     GLuint vertex_buffer, vertex_shader, fragment_shader, program;
     GLint mvp_location, vpos_location, vcol_location;
 
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
  
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
@@ -137,13 +182,6 @@ int main() {
 
         mat4x4 m, p, mvp;
 
-        // Enable depth test
-        glEnable(GL_DEPTH_TEST);
-        // Accept fragment if it closer to the camera than the former one
-        glDepthFunc(GL_LESS);
-        // Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
- 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
 
@@ -158,7 +196,7 @@ int main() {
  
         glUseProgram(program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-        glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
         glfwSwapBuffers(window);
         glfwPollEvents();  
