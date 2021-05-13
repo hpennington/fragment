@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Fragment)
 
 # add the executable
-add_executable(Fragment main.cpp glad.c)
+add_executable(Fragment main.cpp glad/glad.c)
 
 set(CMAKE_CXX_VERSION 11)
 

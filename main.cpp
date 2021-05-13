@@ -9,8 +9,6 @@ void error_callback(int error, const char* description)
 }
 
 int main() {
-    std::cout << "Hello, Fragment!" << std::endl;
-   
     // Do initialization
     glfwSetErrorCallback(error_callback);
     if (!glfwInit()) {
