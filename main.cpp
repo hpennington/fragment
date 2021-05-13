@@ -176,10 +176,18 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     
-    Origin origin = {0.0f, 0.0f, 0.0f};
-    RectSize size = {0.25f, 0.25f, 0.25f};
-    Color color = {1.0f, 0.0f, 0.0f};
-    std::vector<Vertex> vertices = create_rectangle(size, origin, color);
+    std::vector<Vertex> vertices = {};
+    const int num_rects = 10;
+    for (int rect_index = 0; rect_index < num_rects; rect_index += 1) {
+        float width = random_float(0.1, 0.5);
+        RectSize size = {width, width, width};
+        Origin origin = {random_float(-0.9, 0.9), random_float(-0.9, 0.9), random_float(-0.9, 0.9)};
+        Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
+        std::vector<Vertex> rect = create_rectangle(size, origin, color);
+        vertices.insert(vertices.end(), rect.begin(), rect.end()); 
+    }
+
+    std::cout << vertices.size() << std::endl;
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -188,9 +196,9 @@ int main()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(vertices[0]), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     glEnableVertexAttribArray(0);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
