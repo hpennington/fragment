@@ -73,12 +73,12 @@ std::vector<Vertex> create_rectangle(RectSize size, Origin origin, Color color) 
         { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
         { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
         // Right
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
+        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
     };
 
     return vertices;
@@ -90,7 +90,7 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(4.0f, 4.0f, 4.0f);
 
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -107,6 +107,7 @@ const char *vertexShaderSource = "#version 330 core\n"
     "   normal = aNorm;\n"
     "   FragPos = aPos;\n"
     "}\0";
+
 const char *fragmentShaderSource = "#version 330 core\n"
     "in vec3 color;\n"
     "in vec3 normal;\n"
@@ -262,8 +263,8 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         // glBindVertexArray(0); // no need to unbind it every time 
         glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(1.0, 1.0, 1.0));
-        // trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+        trans = glm::rotate(trans, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(1.0, 1.0, 1.0));
+        trans = glm::scale(trans, glm::vec3(0.999, 0.999, 0.999));
         
         unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans)); 
