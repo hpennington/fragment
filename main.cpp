@@ -87,7 +87,7 @@ std::vector<Vertex> create_rectangle(RectSize size, Origin origin, Color color) 
 }
 
 char* string_to_mutable_char_array(std::string str) {
-    auto cstr = new char[str.length() + 1];
+    auto cstr = new char[str.length()];
     strcpy(cstr, str.c_str());
     return cstr;
 }
