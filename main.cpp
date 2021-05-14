@@ -90,7 +90,7 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-glm::vec3 lightPos(0.0f, 0.0f, 1.0f);
+glm::vec3 lightPos(0.0f, 0.0f, 4.0f);
 
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -114,15 +114,21 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "in vec3 FragPos;\n"
     "out vec4 FragColor;\n"
     "uniform vec3 lightPos;\n"
+    "uniform vec3 viewPos;\n"
     "void main()\n"
     "{\n"
-    "   float ambientStrength = 0.25;\n"
+    "   float ambientStrength = 0.4;\n"
     "   vec3 ambient = ambientStrength * color;\n"
     "   vec3 norm = normalize(normal);\n"
     "   vec3 lightDir = normalize(lightPos - FragPos);\n"
     "   float diff = max(dot(norm, lightDir), 0.0);\n"
     "   vec3 diffuse = diff * color;\n"
-    "   vec3 result = (ambient + diffuse) * color;\n"
+    "   float specularStrength = 0.75;\n"
+    "   vec3 viewDir = normalize(viewPos - FragPos);\n"
+    "   vec3 reflectDir = reflect(-lightDir, norm);\n"
+    "   float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);\n"
+    "   vec3 specular = specularStrength * spec * vec3(1.0, 1.0, 1.0);\n"
+    "   vec3 result = (ambient + diffuse + specular) * color;\n"
     "   FragColor = vec4(result, 1.0);\n"
     "}\n\0";
 
@@ -198,7 +204,6 @@ int main()
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
-    // glUniform3fv(glGetUniformLocation("lightPos", "lightPos", 1, lightPos));
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
@@ -265,10 +270,11 @@ int main()
         // glBindVertexArray(0); // no need to unbind it every time 
         glm::mat4 trans = glm::mat4(1.0f);
         trans = glm::rotate(trans, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(1.0, 1.0, 1.0));
-        trans = glm::scale(trans, glm::vec3(0.999, 0.999, 0.999));
         
         unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans)); 
+        unsigned int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+        glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, glm::value_ptr(glm::vec3(1.0f, 1.0f, 4.0f))); 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, sizeof(Vertex), GL_UNSIGNED_INT, 0);
 
