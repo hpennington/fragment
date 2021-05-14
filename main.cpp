@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <fstream>
+#include <string>
 #include <OpenGL/gl.h>
 // Include glad before GLFW per documentation
 #include "glad/glad.h"
@@ -84,56 +86,28 @@ std::vector<Vertex> create_rectangle(RectSize size, Origin origin, Color color) 
     return vertices;
 }
 
+char* string_to_mutable_char_array(std::string str) {
+    auto cstr = new char[str.length() + 1];
+    strcpy(cstr, str.c_str());
+    return cstr;
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-glm::vec3 lightPos(0.0f, 0.0f, 4.0f);
+glm::vec3 lightPos(0.0f, 0.0f, 2.0f);
 
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 3) in vec3 aCol;\n"
-    "layout (location = 6) in vec3 aNorm;\n"
-    "out vec3 color;\n"
-    "out vec3 normal;\n"
-    "out vec3 FragPos;\n"
-    "uniform mat4 transform;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = transform * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "   color = aCol;\n"
-    "   normal = aNorm;\n"
-    "   FragPos = aPos;\n"
-    "}\0";
+std::string load_shader(std::string filename) {
+    std::ifstream ifs(filename);
+    std::string content( (std::istreambuf_iterator<char>(ifs) ),
+                       (std::istreambuf_iterator<char>()    ) );
+    return content;
+}
 
-const char *fragmentShaderSource = "#version 330 core\n"
-    "in vec3 color;\n"
-    "in vec3 normal;\n"
-    "in vec3 FragPos;\n"
-    "out vec4 FragColor;\n"
-    "uniform vec3 lightPos;\n"
-    "uniform vec3 viewPos;\n"
-    "void main()\n"
-    "{\n"
-    "   float ambientStrength = 0.4;\n"
-    "   vec3 ambient = ambientStrength * color;\n"
-    "   vec3 norm = normalize(normal);\n"
-    "   vec3 lightDir = normalize(lightPos - FragPos);\n"
-    "   float diff = max(dot(norm, lightDir), 0.0);\n"
-    "   vec3 diffuse = diff * color;\n"
-    "   float specularStrength = 0.75;\n"
-    "   vec3 viewDir = normalize(viewPos - FragPos);\n"
-    "   vec3 reflectDir = reflect(-lightDir, norm);\n"
-    "   float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);\n"
-    "   vec3 specular = specularStrength * spec * vec3(1.0, 1.0, 1.0);\n"
-    "   vec3 result = (ambient + diffuse + specular) * color;\n"
-    "   FragColor = vec4(result, 1.0);\n"
-    "}\n\0";
-
-int main()
-{
+int main(int argc, char *argv[]) {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -165,10 +139,11 @@ int main()
         return -1;
     }
 
-
     // build and compile our shader program
     // ------------------------------------
-    // vertex shader
+    // vertex shaderS
+    char* vertexShaderSource = string_to_mutable_char_array(load_shader("./vertex.glsl"));
+    
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
@@ -182,6 +157,7 @@ int main()
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // fragment shader
+    char* fragmentShaderSource = string_to_mutable_char_array(load_shader("./fragment.glsl"));
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
@@ -211,7 +187,7 @@ int main()
     // ------------------------------------------------------------------
     
     std::vector<Vertex> vertices = {};
-    const int num_rects = 10;
+    int num_rects = argc > 1 ? atoi(argv[1]) : 100;
     for (int rect_index = 0; rect_index < num_rects; rect_index += 1) {
         float width = random_float(0.1, 0.5);
         RectSize size = {width, width, width};
