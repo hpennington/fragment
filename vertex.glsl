@@ -6,10 +6,12 @@ out vec3 color;
 out vec3 normal;
 out vec3 FragPos;
 uniform mat4 transform;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main()
 {
-   gl_Position = transform * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+   gl_Position = projection * view * transform * vec4(aPos.x, aPos.y, aPos.z, 1.0);
    color = aCol;
    normal = aNorm;
    FragPos = aPos;

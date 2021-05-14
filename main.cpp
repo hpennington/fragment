@@ -10,6 +10,8 @@
 #include "linmath.h"
 #include "glm/glm/glm.hpp"
 #include "glm/glm/gtc/matrix_transform.hpp"
+#include "glm/glm/ext.hpp"
+#include "glm/glm/gtx/string_cast.hpp"
 #include "glm/glm/gtc/type_ptr.hpp"
 
 struct Vertex {
@@ -224,6 +226,8 @@ int main(int argc, char *argv[]) {
 
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+    glUniformMatrix4fv(lightPosLoc, 1, GL_FALSE, glm::value_ptr(lightPos));
 
     // render loop
     // -----------
@@ -245,12 +249,25 @@ int main(int argc, char *argv[]) {
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         // glBindVertexArray(0); // no need to unbind it every time 
         glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(1.0, 1.0, 1.0));
-        
+        trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(1.0, 1.0, 1.0));
+        glm::mat4 view          = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        view       = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        view       = glm::rotate(view, glm::radians(45.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 projection    = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+
+        unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection)); 
+
+        unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view)); 
+
         unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans)); 
+
         unsigned int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
-        glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, glm::value_ptr(glm::vec3(1.0f, 1.0f, 4.0f))); 
+        glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, glm::value_ptr(glm::vec3(0.0f, 0.0f, 4.0f))); 
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, sizeof(Vertex), GL_UNSIGNED_INT, 0);
 
