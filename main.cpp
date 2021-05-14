@@ -206,11 +206,11 @@ int main()
     // ------------------------------------------------------------------
     
     std::vector<Vertex> vertices = {};
-    const int num_rects = 10;
+    const int num_rects = 10000;
     for (int rect_index = 0; rect_index < num_rects; rect_index += 1) {
         float width = random_float(0.1, 0.5);
         RectSize size = {width, width, width};
-        Origin origin = {random_float(-0.9, 0.9), random_float(-0.9, 0.9), random_float(-0.9, 0.9)};
+        Origin origin = {random_float(-0.5, 0.5), random_float(-0.5, 0.5), random_float(-0.5, 0.5)};
         Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
         std::vector<Vertex> rect = create_rectangle(size, origin, color);
         vertices.insert(vertices.end(), rect.begin(), rect.end()); 
