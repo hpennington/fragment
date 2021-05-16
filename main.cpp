@@ -113,12 +113,17 @@ int main(int argc, char* argv[]) {
     const int WINDOW_WIDTH = 1200;
     const int WINDOW_HEIGHT = 800;
 
+    // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
+    Color background_color = {0.0f, 0.0f, 0.0f};
+
     // Create cube in clip space coordinates
     CubeSize size = {0.5, 0.5, 0.5};
     Origin origin = {0.0, 0.0, -0.5};
-    Color color = {1.0, 0.0, 0.0};
+    Color color = {136.0f/255.0f, 0.0, 1.0};
     std::vector<Vertex> vertices = create_cube(size, origin, color);
-    
+
+    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
     if (glfwInit() == GLFW_FALSE) {
         std::cout << "GLFW failed to initialize" << std::endl;
         return -1;
@@ -145,12 +150,13 @@ int main(int argc, char* argv[]) {
         glfwTerminate();
         return -1;
     }
-
-
+    
+    glEnable(GL_DEPTH_TEST);
+    
     // Setup viewport and viewport resizing callback
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    
+
     // Set window as the current context in the main thread
     glfwMakeContextCurrent(window);
 
@@ -165,15 +171,19 @@ int main(int argc, char* argv[]) {
     Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
     shader.bind_buffers(vertices);
     glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(0.0, 1.0, 1.0));
+    trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
+    // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
     unsigned int transform_loc = glGetUniformLocation(shader.getProgram(), "model");
     glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(trans));
+
+    // Bind values for diffuse lighting 
+    glUniform3fv(glGetUniformLocation(shader.getProgram(), "lightPos"), 1, glm::value_ptr(lightPos));
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
         // Set the background color
-        glClearColor(0.12f, 0.5f, 0.25f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(background_color.r, background_color.g, background_color.b, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(shader.getProgram());
         glBindVertexArray(shader.getVAO());
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
