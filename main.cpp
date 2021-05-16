@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
     const int WINDOW_HEIGHT = 800;
 
     // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
-    Color background_color = {0.0f, 0.0f, 0.0f};
+    Color background_color = {0.1f, 0.1f, 0.1f};
 
     // Create cube in clip space coordinates
     CubeSize size = {0.5, 0.5, 0.5};
