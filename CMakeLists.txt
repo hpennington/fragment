@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 project(Fragment)
 
 # add the executable
-add_executable(Fragment main.cpp glad/glad.c)
+add_executable(Fragment main.cpp glad/glad.c shader.cpp)
 
 
 # GLFW3
