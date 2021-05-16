@@ -128,8 +128,6 @@ int main(int argc, char* argv[]) {
         vertices.insert(vertices.begin(), cube.begin(), cube.end());
     }
 
-
-
     if (glfwInit() == GLFW_FALSE) {
         std::cout << "GLFW failed to initialize" << std::endl;
         return -1;
@@ -157,7 +155,6 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     
-    
     // Setup viewport and viewport resizing callback
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -178,7 +175,6 @@ int main(int argc, char* argv[]) {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEBUG_OUTPUT);
-
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
