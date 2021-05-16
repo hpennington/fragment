@@ -71,6 +71,7 @@ void Shader::bind_buffers(std::vector<Vertex> vertices, unsigned int indices[]) 
     glGenBuffers(1, &EBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
+    this->VAO = VAO;
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
@@ -96,3 +97,8 @@ void Shader::bind_buffers(std::vector<Vertex> vertices, unsigned int indices[]) 
 unsigned int Shader::getProgram() {
     return this->program;
 }
+
+void Shader::bind_vertex_array() {
+    glBindVertexArray(this->VAO);
+}
+

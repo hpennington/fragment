@@ -186,6 +186,7 @@ int main(int argc, char* argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shader.getProgram());
         // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        shader.bind_vertex_array();
         glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();
