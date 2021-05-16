@@ -190,8 +190,6 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_DEBUG_OUTPUT);
     
     // Setup viewport and viewport resizing callback
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -211,14 +209,17 @@ int main(int argc, char* argv[]) {
     Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
     shader.bind_buffers(vertices);
 
-    // Rotate model matrix
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
-    // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
-    glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEBUG_OUTPUT);
+
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
+        // Rotate model matrix
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::rotate(trans, glm::radians(43.0f) * (float)glfwGetTime(), glm::vec3(1.0, 1.0, 1.0));
+        // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
+        glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
         // Set the background color
         glClearColor(background_color.r, background_color.g, background_color.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
