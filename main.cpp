@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
     Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
     shader.bind_buffers(vertices);
     glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
+    trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(0.0, 1.0, 1.0));
     unsigned int transform_loc = glGetUniformLocation(shader.getProgram(), "model");
     glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(trans));
 
