@@ -184,8 +184,9 @@ int main(int argc, char* argv[]) {
         // Set the background color
         glClearColor(0.12f, 0.5f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glUseProgram(shader.getProgram());
+        // glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
