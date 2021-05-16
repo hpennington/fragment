@@ -80,20 +80,20 @@ std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
     return vertices;
 }
 
-// float random_float(float min, float max) {
-//     std::random_device rd;
-//     std::mt19937 gen(rd());
-//     std::uniform_real_distribution<> dis(min, max);
-//     return (float)dis(gen);
-// }
+float random_float(float min, float max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(min, max);
+    return (float)dis(gen);
+}
 
-// std::vector<Vertex> create_random_rect() {
-//     Origin origin = {random_float(0.1, 10.0), random_float(0.1, 10.0), random_float(0.1, 100.0)};
-//     CubeSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
-//     Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
-//     auto rect = create_rectangle(size, origin, color);
-//     return rect;
-// }
+std::vector<Vertex> create_random_cube() {
+    Origin origin = {random_float(-0.5, 0.5), random_float(-0.5, 0.5), random_float(-0.5, 0.5)};
+    CubeSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
+    Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
+    auto rect = create_cube(size, origin, color);
+    return rect;
+}
 
 // char* string_to_mutable_char_array(std::string str) {
 //     auto cstr = new char[str.length()];
@@ -112,6 +112,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 int main(int argc, char* argv[]) {
     const int WINDOW_WIDTH = 1200;
     const int WINDOW_HEIGHT = 800;
+    const int num_cubes = argc > 1 ? atoi(argv[1]) : 1;
 
     // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
     Color background_color = {0.1f, 0.1f, 0.1f};
@@ -120,7 +121,14 @@ int main(int argc, char* argv[]) {
     CubeSize size = {0.5, 0.5, 0.5};
     Origin origin = {0.0, 0.0, -0.5};
     Color color = {136.0f/255.0f, 0.0, 1.0};
-    std::vector<Vertex> vertices = create_cube(size, origin, color);
+    std::vector<Vertex> vertices = {};
+
+    for (int i = 0; i < num_cubes; i += 1) {
+        auto cube = create_random_cube();
+        vertices.insert(vertices.begin(), cube.begin(), cube.end());
+    }
+
+
 
     if (glfwInit() == GLFW_FALSE) {
         std::cout << "GLFW failed to initialize" << std::endl;
