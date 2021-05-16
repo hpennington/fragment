@@ -210,11 +210,12 @@ int main(int argc, char* argv[]) {
     // Create shaders link and bind VBO and VAO objects
     Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
     shader.bind_buffers(vertices);
+
+    // Rotate model matrix
     glm::mat4 trans = glm::mat4(1.0f);
     trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
     // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
-    unsigned int transform_loc = glGetUniformLocation(shader.getProgram(), "model");
-    glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(trans));
+    glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
