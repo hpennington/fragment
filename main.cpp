@@ -33,48 +33,89 @@ struct Color {
 
 std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
     std::vector<Vertex> vertices = {
-        // Front
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
-        // Back
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
-        // Top
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
-        // Bottom
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
-        // Left
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
-        { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
-        // Right
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
-        { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      { -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+      {  0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+      {  0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+      {  0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+      { -0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+      { -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+
+      { -0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  0.0f,  1.0f, },
+      {  0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  0.0f,  1.0f, },
+      {  0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  0.0f,  1.0f, },
+      {  0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  0.0f,  1.0f, },
+      { -0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  0.0f,  1.0f, },
+      { -0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  0.0f,  1.0f, },
+
+      { -0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      { -0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      { -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      { -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      { -0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      { -0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+
+      {  0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      {  0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      {  0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      {  0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      {  0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+      {  0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+
+      { -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
+      {  0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
+      {  0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
+      {  0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
+      { -0.5f, -0.5f,  0.5f, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
+      { -0.5f, -0.5f, -0.5f, color.r, color.g, color.b, 0.0f, -1.0f,  0.0f, },
+
+      { -0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
+      {  0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
+      {  0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
+      {  0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
+      { -0.5f,  0.5f,  0.5f, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
+      { -0.5f,  0.5f, -0.5f, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f, },
+        // // Front
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, 1.0f, },
+        // // Back
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  0.0f, -1.0f, },
+        // // Top
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  1.0f,  0.0f },
+        // // Bottom
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 0.0f,  -1.0f,  0.0f, },
+        // // Left
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
+        // { origin.x - size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, -1.0f, 0.0f,  0.0f, },
+        // // Right
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z + size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+        // { origin.x + size.x / 2,  origin.y - size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
+        // { origin.x + size.x / 2,  origin.y + size.y / 2, origin.z - size.z / 2, color.r, color.g, color.b, 1.0f,  0.0f,  0.0f, },
     };
 
     return vertices;
@@ -122,8 +163,6 @@ int main(int argc, char* argv[]) {
     Color color = {136.0f/255.0f, 0.0, 1.0};
     std::vector<Vertex> vertices = create_cube(size, origin, color);
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
     if (glfwInit() == GLFW_FALSE) {
         std::cout << "GLFW failed to initialize" << std::endl;
         return -1;
@@ -152,6 +191,7 @@ int main(int argc, char* argv[]) {
     }
     
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEBUG_OUTPUT);
     
     // Setup viewport and viewport resizing callback
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -175,9 +215,6 @@ int main(int argc, char* argv[]) {
     // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
     unsigned int transform_loc = glGetUniformLocation(shader.getProgram(), "model");
     glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(trans));
-
-    // Bind values for diffuse lighting 
-    glUniform3fv(glGetUniformLocation(shader.getProgram(), "lightPos"), 1, glm::value_ptr(lightPos));
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
