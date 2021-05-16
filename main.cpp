@@ -146,6 +146,11 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+
+    // Setup viewport and viewport resizing callback
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    
     // Set window as the current context in the main thread
     glfwMakeContextCurrent(window);
 
@@ -155,10 +160,6 @@ int main(int argc, char* argv[]) {
         glfwTerminate();
         return -1;
     }
-
-    // Setup viewport and viewport resizing callback
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // Create shaders link and bind VBO and VAO objects
     Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
