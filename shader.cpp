@@ -64,11 +64,10 @@ Shader::Shader(std::string vertex_shader, std::string fragment_shader) {
     glDeleteShader(fragment); 
 }
 
-void Shader::bind_buffers(std::vector<Vertex> vertices, unsigned int indices[]) {
-    unsigned int VBO, VAO, EBO;
+void Shader::bind_buffers(std::vector<Vertex> vertices) {
+    unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
     this->VAO = VAO;
@@ -76,11 +75,11 @@ void Shader::bind_buffers(std::vector<Vertex> vertices, unsigned int indices[]) 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
@@ -98,7 +97,6 @@ unsigned int Shader::getProgram() {
     return this->program;
 }
 
-void Shader::bind_vertex_array() {
-    glBindVertexArray(this->VAO);
+unsigned int Shader::getVAO() {
+    return this->VAO;
 }
-

@@ -8,9 +8,9 @@
 class Shader {
 public:
     Shader(std::string vertex_shader, std::string fragment_shader);
-    void bind_buffers(std::vector<Vertex> vertices, unsigned int indices[]);
+    void bind_buffers(std::vector<Vertex> vertices);
     unsigned int getProgram();
-    void bind_vertex_array();
+    unsigned int getVAO();
 private:
     unsigned int program;
     unsigned int VAO;
