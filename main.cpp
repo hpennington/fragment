@@ -93,15 +93,74 @@ char* string_to_mutable_char_array(std::string str) {
     return cstr;
 }
 
-std::vector<Vertex> create_random_rect() {
-    Origin origin = {random_float(0.1, 10.0), random_float(0.1, 10.0), random_float(0.1, 100.0)};
-    RectSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
-    Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
-    auto rect = create_rectangle(size, origin, color);
-    return rect;
+// std::vector<Vertex> create_random_rect() {
+//     Origin origin = {random_float(0.1, 10.0), random_float(0.1, 10.0), random_float(0.1, 100.0)};
+//     RectSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
+//     Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
+//     auto rect = create_rectangle(size, origin, color);
+//     return rect;
+// }
+
+void error_callback(int error, const char* description) {
+    fprintf(stderr, "Error: %s\n", description);
 }
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+}  
+
 int main(int argc, char* argv[]) {
-    std::cout << "Hello, Fragment!" << std::endl;
+    const int WINDOW_WIDTH = 1200;
+    const int WINDOW_HEIGHT = 800;
+    
+    if (glfwInit() == GLFW_FALSE) {
+        std::cout << "GLFW failed to initialize" << std::endl;
+        return -1;
+    }
+
+    std::cout << "GLFW Initialized!" << std::endl;
+
+    // Set the version and use the core profile
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For macOS
+
+    // Set callbacks
+    glfwSetErrorCallback(error_callback);
+
+    // Create the window
+    auto window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Fragment", NULL, NULL);
+    if (!window) {
+        std::cout << "GLFW failed to create a window. Terminating" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    // Set window as the current context in the main thread
+    glfwMakeContextCurrent(window);
+
+    // Initialize GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    // Setup viewport and viewport resizing callback
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    
+    // Render loop   
+    while(!glfwWindowShouldClose(window)) {
+        // Set background the color
+        glClearColor(0.12f, 0.5f, 0.25f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glfwTerminate();
+
     return 0;
 }
