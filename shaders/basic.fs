@@ -14,7 +14,7 @@ void main() {
     
     // Diffuse 
     vec3 norm = normalize(normal);
-    vec3 lightDir = normalize(vec3(1.0f, 2.0f, 2.0f) - fragPos);
+    vec3 lightDir = normalize(vec3(1.0f, 20.0f, 20.0f) - fragPos);
 
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * vec3(1.0f, 1.0f, 1.0f);
