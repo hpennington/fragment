@@ -88,7 +88,7 @@ float random_float(float min, float max) {
 }
 
 std::vector<Vertex> create_random_cube() {
-    Origin origin = {random_float(-0.5, 0.5), random_float(-0.5, 0.5), random_float(-0.5, 0.5)};
+    Origin origin = {random_float(0.6, 99.4), random_float(0.6, 99.4), random_float(0.6, 99.4)};
     CubeSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
     Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
     auto rect = create_cube(size, origin, color);
@@ -112,20 +112,22 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 int main(int argc, char* argv[]) {
     const int WINDOW_WIDTH = 1200;
     const int WINDOW_HEIGHT = 800;
-    const int num_cubes = argc > 1 ? atoi(argv[1]) : 1;
+    const int num_cubes = 1;
 
     // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
     Color background_color = {0.1f, 0.1f, 0.1f};
 
     // Create cube in clip space coordinates
     CubeSize size = {0.5, 0.5, 0.5};
-    Origin origin = {0.0, 0.0, -0.5};
+    Origin origin = {0.0, -0.5, -0.5};
     Color color = {136.0f/255.0f, 0.0, 1.0};
     std::vector<Vertex> vertices = {};
 
     for (int i = 0; i < num_cubes; i += 1) {
-        auto cube = create_random_cube();
+        // auto cube = create_random_cube();
+        auto cube = create_cube(size, origin, color);
         vertices.insert(vertices.begin(), cube.begin(), cube.end());
+        origin.z -= 0.5;
     }
 
     if (glfwInit() == GLFW_FALSE) {
@@ -176,13 +178,24 @@ int main(int argc, char* argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEBUG_OUTPUT);
 
+    // Rotate model matrix
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
+    // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
+    glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
+    
+    glm::mat4 projection = glm::mat4(1.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
-        // Rotate model matrix
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(43.0f) * (float)glfwGetTime(), glm::vec3(1.0, 1.0, 1.0));
-        // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
-        glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        view = glm::rotate(view, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+
         // Set the background color
         glClearColor(background_color.r, background_color.g, background_color.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
