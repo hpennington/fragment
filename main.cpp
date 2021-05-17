@@ -107,26 +107,42 @@ void error_callback(int error, const char* description) {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
-}  
+}
 
-int main(int argc, char* argv[]) {
-    const int WINDOW_WIDTH = 1200;
-    const int WINDOW_HEIGHT = 800;
-    const int num_cubes = 10;
-
-    // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
-    Color background_color = {0.1f, 0.1f, 0.1f};
-
+std::vector<Vertex> init_world(int x, int y, int z) {
     // Create cube in clip space coordinates
     CubeSize size = {0.5, 0.5, 0.5};
     Origin origin = {0.0, -0.5, -0.5};
     Color color = {136.0f/255.0f, 0.0, 1.0};
     std::vector<Vertex> vertices = {};
 
-    for (int i = 0; i < num_cubes; i += 1) {
-        auto cube = create_random_cube();
-        vertices.insert(vertices.begin(), cube.begin(), cube.end());
+    for (int i = 0; i < x; i += 1) {
+        for (int j = 0; j < z; j += 1) {
+            auto cube = create_cube(size, origin, color);
+            vertices.insert(vertices.begin(), cube.begin(), cube.end());
+            origin.z += 0.5;
+        }
+        origin.x += 0.5;
+        origin.z = -0.5;
     }
+
+    return vertices;
+}
+
+int main(int argc, char* argv[]) {
+    const int WINDOW_WIDTH = 1200;
+    const int WINDOW_HEIGHT = 800;
+    
+    const int WORLD_Y = 1;
+    const int WORLD_X = 10;
+    const int WORLD_Z = 10;
+
+    const int n_threads = 8;
+
+    // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
+    Color background_color = {0.1f, 0.1f, 0.1f};
+    
+    auto vertices = init_world(WORLD_X, WORLD_Y, WORLD_Z);
 
     auto camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -192,9 +208,10 @@ int main(int argc, char* argv[]) {
     while(!glfwWindowShouldClose(window)) {
 
         glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        view = glm::rotate(view, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -6.0f));
+        view = glm::rotate(view, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(1.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+        camera_position = glm::vec3(1.0f, 10.0f, 1.0f);
         glUniform3fv(glGetUniformLocation(shader.getProgram(), "camera_position"), 1, &camera_position[0]);
 
         // Set the background color
