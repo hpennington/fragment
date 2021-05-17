@@ -137,8 +137,6 @@ int main(int argc, char* argv[]) {
     const int WORLD_X = 10;
     const int WORLD_Z = 10;
 
-    const int n_threads = 8;
-
     // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
     Color background_color = {0.1f, 0.1f, 0.1f};
     
