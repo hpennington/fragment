@@ -88,7 +88,7 @@ float random_float(float min, float max) {
 }
 
 std::vector<Vertex> create_random_cube() {
-    Origin origin = {random_float(0.6, 99.4), random_float(0.6, 99.4), random_float(0.6, 99.4)};
+    Origin origin = {random_float(-1.0f, 1.0f), random_float(-1.0f, 1.0f), random_float(-1.0f, 1.0f)};
     CubeSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
     Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
     auto rect = create_cube(size, origin, color);
@@ -112,7 +112,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 int main(int argc, char* argv[]) {
     const int WINDOW_WIDTH = 1200;
     const int WINDOW_HEIGHT = 800;
-    const int num_cubes = 1;
+    const int num_cubes = 10;
 
     // Color background_color = {0.0f, 1.0f, 199.0f/255.0f};
     Color background_color = {0.1f, 0.1f, 0.1f};
@@ -124,11 +124,11 @@ int main(int argc, char* argv[]) {
     std::vector<Vertex> vertices = {};
 
     for (int i = 0; i < num_cubes; i += 1) {
-        // auto cube = create_random_cube();
-        auto cube = create_cube(size, origin, color);
+        auto cube = create_random_cube();
         vertices.insert(vertices.begin(), cube.begin(), cube.end());
-        origin.z -= 0.5;
     }
+
+    auto camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     if (glfwInit() == GLFW_FALSE) {
         std::cout << "GLFW failed to initialize" << std::endl;
@@ -195,6 +195,7 @@ int main(int argc, char* argv[]) {
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
         view = glm::rotate(view, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniform3fv(glGetUniformLocation(shader.getProgram(), "camera_position"), 1, &camera_position[0]);
 
         // Set the background color
         glClearColor(background_color.r, background_color.g, background_color.b, 1.0f);
