@@ -39,7 +39,7 @@ const int WORLD_Y = 5;
 const int WORLD_X = 10;
 const int WORLD_Z = 10;
 
-Color background_color = {0.1f, 0.1f, 0.1f};
+Color background_color = {0.2f, 0.2f, 0.2f};
 
 float lastX = WINDOW_WIDTH / 2.0f;
 float lastY = WINDOW_HEIGHT / 2.0f;
@@ -208,7 +208,10 @@ int main(int argc, char* argv[]) {
         std::cout << "GLFW failed to create a window. Terminating" << std::endl;
         glfwTerminate();
         return -1;
-    }    
+    }
+
+    // tell GLFW to capture our mouse
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Set callbacks
     glfwSetErrorCallback(error_callback);
@@ -240,7 +243,7 @@ int main(int argc, char* argv[]) {
         processInput(window);
         // Rotate model matrix
         glm::mat4 trans = glm::mat4(1.0f);
-        // trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
+        trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(0.0, 1.0, 0.0));
         // trans = glm::rotate(trans, glm::radians(-camera.getAngle()), glm::vec3(0.0, 1.0, 0.0));
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
         
