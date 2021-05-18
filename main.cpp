@@ -32,6 +32,23 @@ struct Color {
     float r, g, b;
 };
 
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 800;
+
+const int WORLD_Y = 5;
+const int WORLD_X = 10;
+const int WORLD_Z = 10;
+
+Color background_color = {0.1f, 0.1f, 0.1f};
+
+float lastX = WINDOW_WIDTH / 2.0f;
+float lastY = WINDOW_HEIGHT / 2.0f;
+bool firstMouse = true;
+
+// timing
+float deltaTime = 0.0f; 
+float lastFrame = 0.0f;
+
 Camera camera = Camera();
 
 std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
@@ -96,6 +113,22 @@ void processInput(GLFWwindow *window) {
         camera.process_input(RIGHT);
 }
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.process_mouse(xoffset, yoffset);
+}
+
 float random_float(float min, float max) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -151,15 +184,6 @@ std::vector<Vertex> init_world(int x, int y, int z) {
 }
 
 int main(int argc, char* argv[]) {
-    const int WINDOW_WIDTH = 1200;
-    const int WINDOW_HEIGHT = 800;
-    
-    const int WORLD_Y = 5;
-    const int WORLD_X = 10;
-    const int WORLD_Z = 10;
-
-    Color background_color = {0.1f, 0.1f, 0.1f};
-    
     auto vertices = init_world(WORLD_X, WORLD_Y, WORLD_Z);
 
     if (glfwInit() == GLFW_FALSE) {
@@ -178,20 +202,20 @@ int main(int argc, char* argv[]) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    // Set callbacks
-    glfwSetErrorCallback(error_callback);
-
     // Create the window
     auto window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Fragment", NULL, NULL);
     if (!window) {
         std::cout << "GLFW failed to create a window. Terminating" << std::endl;
         glfwTerminate();
         return -1;
-    }
-    
-    // Setup viewport and viewport resizing callback
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    }    
+
+    // Set callbacks
+    glfwSetErrorCallback(error_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     // Set window as the current context in the main thread
     glfwMakeContextCurrent(window);
@@ -212,7 +236,7 @@ int main(int argc, char* argv[]) {
 
     // Rotate model matrix
     glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
+    // trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
     // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
     glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
     
@@ -223,9 +247,7 @@ int main(int argc, char* argv[]) {
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, camera.getPosition());
-        view = glm::rotate(view, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(1.0f, 1.0f, 0.0f));
+        glm::mat4 view = camera.getViewMatrix();
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 
         auto camera_position = camera.getPosition();
