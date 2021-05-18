@@ -18,6 +18,7 @@
 #include "glm/glm/gtc/type_ptr.hpp"
 #include "shader.hpp"
 #include "vertex.hpp"
+#include "camera.hpp"
 
 struct CubeSize {
     float x, y, z;
@@ -30,6 +31,8 @@ struct Origin {
 struct Color {
     float r, g, b;
 };
+
+Camera camera = Camera();
 
 std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
     std::vector<Vertex> vertices = {
@@ -78,6 +81,19 @@ std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
     };
 
     return vertices;
+}
+
+void processInput(GLFWwindow *window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.process_input(FORWARD);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.process_input(BACKWARD);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.process_input(LEFT);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.process_input(RIGHT);
 }
 
 float random_float(float min, float max) {
@@ -146,8 +162,6 @@ int main(int argc, char* argv[]) {
     
     auto vertices = init_world(WORLD_X, WORLD_Y, WORLD_Z);
 
-    auto camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
-
     if (glfwInit() == GLFW_FALSE) {
         std::cout << "GLFW failed to initialize" << std::endl;
         return -1;
@@ -208,12 +222,13 @@ int main(int argc, char* argv[]) {
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
-
+        processInput(window);
         glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -20.0f));
+        view = glm::translate(view, camera.getPosition());
         view = glm::rotate(view, glm::radians(90.0f * (float)glfwGetTime()), glm::vec3(1.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
-        camera_position = glm::vec3(1.0f, 10.0f, 20.0f);
+
+        auto camera_position = camera.getPosition();
         glUniform3fv(glGetUniformLocation(shader.getProgram(), "camera_position"), 1, &camera_position[0]);
 
         // Set the background color
