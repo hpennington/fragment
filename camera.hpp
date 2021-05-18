@@ -39,9 +39,9 @@ public:
 
     void process_mouse(float xOffset, float yOffset) {
         if (xOffset > 0) {
-            this->angle += 1.0f;    
+            this->angle -= 0.01f;    
         } else {
-            this->angle -= 1.0f;    
+            this->angle += 0.01f;    
         }
         
     }
@@ -49,12 +49,15 @@ public:
     glm::mat4 getViewMatrix() {
         glm::mat4 view = glm::mat4(1.0f);
         view = glm::translate(view, this->position);
-        view = glm::rotate(view, glm::radians(this->angle), glm::vec3(0.0f, 1.0f, 0.0f));  
         return view;
     }
 
     glm::vec3 getPosition() {
         return this->position;
+    }
+
+    float getAngle() {
+        return this->angle;
     }
 
 private:

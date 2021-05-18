@@ -161,7 +161,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 std::vector<Vertex> init_world(int x, int y, int z) {
     // Create cube in clip space coordinates
     CubeSize size = {0.5, 0.5, 0.5};
-    Origin origin = {0.0, -0.5, -0.5};
+    Origin origin = {0.0, 0.0, 0.0};
     Color color = {136.0f/255.0f, 0.0, 1.0};
     std::vector<Vertex> vertices = {};
 
@@ -174,7 +174,7 @@ std::vector<Vertex> init_world(int x, int y, int z) {
             }
 
             origin.x += 0.5;
-            origin.z = -0.5;
+            origin.z = 0.0;
         }
         origin.y += 0.5;
         origin.x = 0.0;
@@ -234,19 +234,19 @@ int main(int argc, char* argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEBUG_OUTPUT);
 
-    // Rotate model matrix
-    glm::mat4 trans = glm::mat4(1.0f);
-    // trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
-    // trans = glm::rotate(trans, glm::radians(3.0f), glm::vec3(1.0, 0.0, 0.0));
-    glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
-    
-    glm::mat4 projection = glm::mat4(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-    glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
+        // Rotate model matrix
+        glm::mat4 trans = glm::mat4(1.0f);
+        // trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(1.0, 1.0, 1.0));
+        // trans = glm::rotate(trans, glm::radians(-camera.getAngle()), glm::vec3(0.0, 1.0, 0.0));
+        glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
+        
+        glm::mat4 projection = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+        glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glm::mat4 view = camera.getViewMatrix();
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 
