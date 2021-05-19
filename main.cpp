@@ -100,18 +100,19 @@ std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
     return vertices;
 }
 
-void processInput(GLFWwindow *window) {
+void process_input(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.process_input(FORWARD);
+        camera.processKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.process_input(BACKWARD);
+        camera.processKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.process_input(LEFT);
+        camera.processKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.process_input(RIGHT);
+        camera.processKeyboard(RIGHT, deltaTime);
 }
+
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     if (firstMouse) {
@@ -126,7 +127,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     lastX = xpos;
     lastY = ypos;
 
-    camera.process_mouse(xoffset, yoffset);
+    camera.processMouse(xoffset, yoffset);
 }
 
 float random_float(float min, float max) {
@@ -190,7 +191,6 @@ int main(int argc, char* argv[]) {
         std::cout << "GLFW failed to initialize" << std::endl;
         return -1;
     }
-
     std::cout << "GLFW Initialized!" << std::endl;
 
     // Set the version and use the core profile
@@ -237,10 +237,15 @@ int main(int argc, char* argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEBUG_OUTPUT);
 
+    camera.setMovementSpeed(10.0);
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
-        processInput(window);
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        process_input(window);
         // Rotate model matrix
         glm::mat4 trans = glm::mat4(1.0f);
         trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(0.0, 1.0, 0.0));
