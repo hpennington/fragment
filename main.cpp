@@ -39,9 +39,9 @@ enum KeyboardPress {
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;
 
-const int WORLD_Y = 5;
-const int WORLD_X = 10;
-const int WORLD_Z = 10;
+const int CENTER_Y = 50;
+const int CENTER_X = 10;
+const int CENTER_Z = 10;
 
 Color background_color = {0.2f, 0.2f, 0.2f};
 
@@ -181,7 +181,7 @@ std::vector<Vertex> init_world(int x, int y, int z) {
     return vertices;
 }
 
-auto vertices = init_world(WORLD_X, WORLD_Y, WORLD_Z);
+auto vertices = init_world(CENTER_X, CENTER_Y, CENTER_Z);
 
 // Create shaders
 Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
@@ -193,16 +193,21 @@ void add_block() {
 }
 
 void process_input(GLFWwindow* window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         camera.processKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         camera.processKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    } 
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         camera.processKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         camera.processKeyboard(RIGHT, deltaTime);
+    }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         add_block();
     }
