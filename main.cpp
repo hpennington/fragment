@@ -39,10 +39,6 @@ enum KeyboardPress {
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;
 
-const int CENTER_Y = 50;
-const int CENTER_X = 10;
-const int CENTER_Z = 10;
-
 Color background_color = {216.0f / 255.0f, 242.0f / 255.0f, 255.0f / 255.0f};
 
 float lastX = WINDOW_WIDTH / 2.0f;
@@ -156,7 +152,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-std::vector<Vertex> init_world(int x, int y, int z) {
+std::vector<Vertex> init_world() {
     std::vector<Vertex> vertices = {};
 
     // Create ground plane/cube
@@ -183,30 +179,10 @@ std::vector<Vertex> init_world(int x, int y, int z) {
     auto goldenCube = create_cube(size, origin, color);
     vertices.insert(vertices.end(), goldenCube.begin(), goldenCube.end());
 
-    // // Create cube in clip space coordinates
-    // CubeSize size = {0.5, 0.5, 0.5};
-    // Origin origin = {0.0, 0.0, 0.0};
-    // Color color = {136.0f/255.0f, 0.0, 1.0};
-
-    // for (int i = 0; i < y; i += 1) {
-    //     for (int j = 0; j < x; j += 1) {
-    //         for (int k = 0; k < z; k += 1) {
-    //             auto cube = create_cube(size, origin, color);
-    //             vertices.insert(vertices.begin(), cube.begin(), cube.end());
-    //             origin.z += 0.5;
-    //         }
-
-    //         origin.x += 0.5;
-    //         origin.z = 0.0;
-    //     }
-    //     origin.y += 0.5;
-    //     origin.x = 0.0;
-    // }
-
     return vertices;
 }
 
-auto vertices = init_world(CENTER_X, CENTER_Y, CENTER_Z);
+auto vertices = init_world();
 
 // Create shaders
 Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
