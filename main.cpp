@@ -32,6 +32,10 @@ struct Color {
     float r, g, b;
 };
 
+enum KeyboardPress {
+    SPACE
+};
+
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 800;
 
@@ -100,20 +104,6 @@ std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
     return vertices;
 }
 
-void process_input(GLFWwindow* window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.processKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.processKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.processKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.processKeyboard(RIGHT, deltaTime);
-}
-
-
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     if (firstMouse) {
         lastX = xpos;
@@ -138,11 +128,18 @@ float random_float(float min, float max) {
 }
 
 std::vector<Vertex> create_random_cube() {
-    Origin origin = {random_float(-1.0f, 1.0f), random_float(-1.0f, 1.0f), random_float(-1.0f, 1.0f)};
-    CubeSize size = {random_float(0.1, 0.5), random_float(0.1, 0.5), random_float(0.1, 0.5)};
+    Origin origin = {random_float(0.0f, 100.0f), random_float(0.0f, 0.0f), random_float(0.0f, 100.0f)};
+    CubeSize size = {random_float(1.0f, 1.0f), random_float(1.0f, 1.0f), random_float(1.0f, 1.0f)};
     Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
-    auto rect = create_cube(size, origin, color);
-    return rect;
+    auto cube = create_cube(size, origin, color);
+    return cube;
+}
+
+std::vector<Vertex> create_uniform_cube(Origin origin) {
+    CubeSize size = {random_float(1.0f, 1.0f), random_float(1.0f, 1.0f), random_float(1.0f, 1.0f)};
+    Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
+    auto cube = create_cube(size, origin, color);
+    return cube;
 }
 
 // char* string_to_mutable_char_array(std::string str) {
@@ -184,8 +181,31 @@ std::vector<Vertex> init_world(int x, int y, int z) {
     return vertices;
 }
 
+auto vertices = init_world(WORLD_X, WORLD_Y, WORLD_Z);
+
+void add_block(Origin origin) {
+    auto cube = create_random_cube();
+    vertices.insert(vertices.end(), cube.begin(), cube.end());
+}
+
+void process_input(GLFWwindow* window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.processKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.processKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.processKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.processKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        Origin origin = {camera.getPosition().x, 0, camera.getPosition().z};
+        add_block(origin);
+    }
+}
+
 int main(int argc, char* argv[]) {
-    auto vertices = init_world(WORLD_X, WORLD_Y, WORLD_Z);
 
     if (glfwInit() == GLFW_FALSE) {
         std::cout << "GLFW failed to initialize" << std::endl;
@@ -232,7 +252,6 @@ int main(int argc, char* argv[]) {
 
     // Create shaders link and bind VBO and VAO objects
     Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
-    shader.bind_buffers(vertices);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEBUG_OUTPUT);
@@ -241,6 +260,7 @@ int main(int argc, char* argv[]) {
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
+        shader.bind_buffers(vertices);
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
