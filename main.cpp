@@ -43,7 +43,7 @@ const int CENTER_Y = 50;
 const int CENTER_X = 10;
 const int CENTER_Z = 10;
 
-Color background_color = {0.2f, 0.2f, 1.0f};
+Color background_color = {216.0f / 255.0f, 242.0f / 255.0f, 255.0f / 255.0f};
 
 float lastX = WINDOW_WIDTH / 2.0f;
 float lastY = WINDOW_HEIGHT / 2.0f;
@@ -162,14 +162,14 @@ std::vector<Vertex> init_world(int x, int y, int z) {
     // Create ground plane/cube
     CubeSize size = {100, 0.1, 100};
     Origin origin = {0.0, 0.0, 0.0};
-    Color color = {0.0f, 1.0f, 0.25f};
+    Color color = {127.0f / 255.0f, 0.98f, 0.0f};
     auto ground = create_cube(size, origin, color);
     vertices.insert(vertices.end(), ground.begin(), ground.end());
 
     // Create building cube
     size = {10, 100, 10};
     origin = {0.0, 50.0, 0.0};
-    color = {136.0f/255.0f, 0.0, 1.0};
+    color = {136.0f/255.0f, 136.0f / 255.0f, 136.0f / 255.0f};
     auto building = create_cube(size, origin, color);
     vertices.insert(vertices.end(), building.begin(), building.end());
 
