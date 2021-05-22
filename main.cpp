@@ -187,12 +187,16 @@ auto vertices = init_world(CENTER_X, CENTER_Y, CENTER_Z);
 Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
 
 void add_block() {
-    auto cube = create_random_cube();
+    Origin origin = {camera.getPosition().x + camera.Front.x * 4, 0.0f, camera.getPosition().z + camera.Front.z * 4};
+    auto cube = create_uniform_cube(origin);
     vertices.insert(vertices.end(), cube.begin(), cube.end());
     shader.bind_buffers(vertices);
 }
 
+bool SPACE_DOWN = false;
+
 void process_input(GLFWwindow* window) {
+    // std::cout << camera.getPosition().x << " " << camera.getPosition().z << std::endl;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
@@ -209,7 +213,13 @@ void process_input(GLFWwindow* window) {
         camera.processKeyboard(RIGHT, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        add_block();
+        SPACE_DOWN = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE) {
+        if (SPACE_DOWN) {
+            add_block();
+            SPACE_DOWN = false;
+        }
     }
 }
 
@@ -276,7 +286,7 @@ int main(int argc, char* argv[]) {
         process_input(window);
         // Rotate model matrix
         glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(0.0, 1.0, 0.0));
+        // trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(0.0, 1.0, 0.0));
         // trans = glm::rotate(trans, glm::radians(-camera.getAngle()), glm::vec3(0.0, 1.0, 0.0));
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
         
