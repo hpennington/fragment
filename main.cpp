@@ -129,7 +129,7 @@ float random_float(float min, float max) {
 
 std::vector<Vertex> create_random_cube() {
     Origin origin = {random_float(-100.0f, 100.0f), random_float(0.0f, 0.0f), random_float(-100.0f, 100.0f)};
-    CubeSize size = {random_float(1.0f, 1.0f), random_float(1.0f, 1.0f), random_float(1.0f, 1.0f)};
+    CubeSize size = {random_float(10.0f, 20.0f), random_float(10.0f, 100.0f), random_float(10.0f, 20.0f)};
     Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
     auto cube = create_cube(size, origin, color);
     return cube;
@@ -160,18 +160,27 @@ std::vector<Vertex> init_world(int x, int y, int z) {
     std::vector<Vertex> vertices = {};
 
     // Create ground plane/cube
-    CubeSize size = {100, 0.1, 100};
+    CubeSize size = {1000, 0.1, 1000};
     Origin origin = {0.0, 0.0, 0.0};
     Color color = {127.0f / 255.0f, 0.98f, 0.0f};
     auto ground = create_cube(size, origin, color);
     vertices.insert(vertices.end(), ground.begin(), ground.end());
 
-    // Create building cube
-    size = {10, 100, 10};
-    origin = {0.0, 50.0, 0.0};
-    color = {136.0f/255.0f, 136.0f / 255.0f, 136.0f / 255.0f};
-    auto building = create_cube(size, origin, color);
-    vertices.insert(vertices.end(), building.begin(), building.end());
+    // Create buildings
+    for (int i = 0; i < 100; i += 1) {
+        color = {136.0f/255.0f, 136.0f / 255.0f, 136.0f / 255.0f};
+        size = {random_float(30.0f, 80.0f), random_float(10.0f, 100.0f), random_float(30.0f, 80.0f)};
+        origin = {random_float(-500.0f, 500.0f), size.y / 2, random_float(-500.0f, 500.0f)};
+        auto building = create_cube(size, origin, color);
+        vertices.insert(vertices.end(), building.begin(), building.end());
+    }
+
+    // Create golden cube
+    size = {10, 10, 10};
+    origin = {random_float(-500.0f, 500.0f), 0.0, random_float(-500.0f, 500.0f)};
+    color = {255.0f / 255.0f, 215.0f / 255.0f, 0.0f};
+    auto goldenCube = create_cube(size, origin, color);
+    vertices.insert(vertices.end(), goldenCube.begin(), goldenCube.end());
 
     // // Create cube in clip space coordinates
     // CubeSize size = {0.5, 0.5, 0.5};
@@ -290,7 +299,7 @@ int main(int argc, char* argv[]) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEBUG_OUTPUT);
 
-    camera.setMovementSpeed(10.0);
+    camera.setMovementSpeed(40.0);
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
@@ -306,7 +315,7 @@ int main(int argc, char* argv[]) {
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
         
         glm::mat4 projection = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 1000.0f);
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glm::mat4 view = camera.getViewMatrix();
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
