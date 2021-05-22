@@ -23,10 +23,15 @@ bool check_compile_error(unsigned int shader) {
 }
 
 Shader::Shader(std::string vertex_shader, std::string fragment_shader) {
+    this->vertex_shader = vertex_shader;
+    this->fragment_shader = fragment_shader;
+}
+
+bool Shader::compile_shaders() {
     // Read shaders into variables v_content and f_content
-    std::ifstream v_ifs(vertex_shader);
+    std::ifstream v_ifs(this->vertex_shader);
     std::string v_content((std::istreambuf_iterator<char>(v_ifs)), (std::istreambuf_iterator<char>()));
-    std::ifstream f_ifs(fragment_shader);
+    std::ifstream f_ifs(this->fragment_shader);
     std::string f_content((std::istreambuf_iterator<char>(f_ifs)), (std::istreambuf_iterator<char>()));
     
     // Compile shaders
@@ -61,7 +66,9 @@ Shader::Shader(std::string vertex_shader, std::string fragment_shader) {
 
     // Clean up
     glDeleteShader(vertex);
-    glDeleteShader(fragment); 
+    glDeleteShader(fragment);
+    return (bool)success;
+
 }
 
 void Shader::bind_buffers(std::vector<Vertex> vertices) {

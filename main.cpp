@@ -128,7 +128,7 @@ float random_float(float min, float max) {
 }
 
 std::vector<Vertex> create_random_cube() {
-    Origin origin = {random_float(0.0f, 100.0f), random_float(0.0f, 0.0f), random_float(0.0f, 100.0f)};
+    Origin origin = {random_float(-100.0f, 100.0f), random_float(0.0f, 0.0f), random_float(-100.0f, 100.0f)};
     CubeSize size = {random_float(1.0f, 1.0f), random_float(1.0f, 1.0f), random_float(1.0f, 1.0f)};
     Color color = {random_float(0.0, 1.0), random_float(0.0, 1.0), random_float(0.0, 1.0)};
     auto cube = create_cube(size, origin, color);
@@ -183,9 +183,13 @@ std::vector<Vertex> init_world(int x, int y, int z) {
 
 auto vertices = init_world(WORLD_X, WORLD_Y, WORLD_Z);
 
-void add_block(Origin origin) {
+// Create shaders
+Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
+
+void add_block() {
     auto cube = create_random_cube();
     vertices.insert(vertices.end(), cube.begin(), cube.end());
+    shader.bind_buffers(vertices);
 }
 
 void process_input(GLFWwindow* window) {
@@ -200,8 +204,7 @@ void process_input(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.processKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        Origin origin = {camera.getPosition().x, 0, camera.getPosition().z};
-        add_block(origin);
+        add_block();
     }
 }
 
@@ -250,8 +253,9 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    // Create shaders link and bind VBO and VAO objects
-    Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
+    // Compile shaders and link buffers
+    shader.compile_shaders();
+    shader.bind_buffers(vertices);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_DEBUG_OUTPUT);
@@ -260,7 +264,6 @@ int main(int argc, char* argv[]) {
 
     // Render loop   
     while(!glfwWindowShouldClose(window)) {
-        shader.bind_buffers(vertices);
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
