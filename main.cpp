@@ -43,7 +43,7 @@ const int CENTER_Y = 50;
 const int CENTER_X = 10;
 const int CENTER_Z = 10;
 
-Color background_color = {0.2f, 0.2f, 0.2f};
+Color background_color = {0.2f, 0.2f, 1.0f};
 
 float lastX = WINDOW_WIDTH / 2.0f;
 float lastY = WINDOW_HEIGHT / 2.0f;
@@ -53,7 +53,7 @@ bool firstMouse = true;
 float deltaTime = 0.0f; 
 float lastFrame = 0.0f;
 
-Camera camera = Camera();
+Camera camera = Camera(glm::vec3(0.0f, 2.0f, 0.0f));
 
 std::vector<Vertex> create_cube(CubeSize size, Origin origin, Color color) {
     std::vector<Vertex> vertices = {
@@ -157,26 +157,41 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 std::vector<Vertex> init_world(int x, int y, int z) {
-    // Create cube in clip space coordinates
-    CubeSize size = {0.5, 0.5, 0.5};
-    Origin origin = {0.0, 0.0, 0.0};
-    Color color = {136.0f/255.0f, 0.0, 1.0};
     std::vector<Vertex> vertices = {};
 
-    for (int i = 0; i < y; i += 1) {
-        for (int j = 0; j < x; j += 1) {
-            for (int k = 0; k < z; k += 1) {
-                auto cube = create_cube(size, origin, color);
-                vertices.insert(vertices.begin(), cube.begin(), cube.end());
-                origin.z += 0.5;
-            }
+    // Create ground plane/cube
+    CubeSize size = {100, 0.1, 100};
+    Origin origin = {0.0, 0.0, 0.0};
+    Color color = {0.0f, 1.0f, 0.25f};
+    auto ground = create_cube(size, origin, color);
+    vertices.insert(vertices.end(), ground.begin(), ground.end());
 
-            origin.x += 0.5;
-            origin.z = 0.0;
-        }
-        origin.y += 0.5;
-        origin.x = 0.0;
-    }
+    // Create building cube
+    size = {10, 100, 10};
+    origin = {0.0, 50.0, 0.0};
+    color = {136.0f/255.0f, 0.0, 1.0};
+    auto building = create_cube(size, origin, color);
+    vertices.insert(vertices.end(), building.begin(), building.end());
+
+    // // Create cube in clip space coordinates
+    // CubeSize size = {0.5, 0.5, 0.5};
+    // Origin origin = {0.0, 0.0, 0.0};
+    // Color color = {136.0f/255.0f, 0.0, 1.0};
+
+    // for (int i = 0; i < y; i += 1) {
+    //     for (int j = 0; j < x; j += 1) {
+    //         for (int k = 0; k < z; k += 1) {
+    //             auto cube = create_cube(size, origin, color);
+    //             vertices.insert(vertices.begin(), cube.begin(), cube.end());
+    //             origin.z += 0.5;
+    //         }
+
+    //         origin.x += 0.5;
+    //         origin.z = 0.0;
+    //     }
+    //     origin.y += 0.5;
+    //     origin.x = 0.0;
+    // }
 
     return vertices;
 }
@@ -187,7 +202,7 @@ auto vertices = init_world(CENTER_X, CENTER_Y, CENTER_Z);
 Shader shader = Shader("shaders/basic.vs", "shaders/basic.fs");
 
 void add_block() {
-    Origin origin = {camera.getPosition().x + camera.Front.x * 4, 0.0f, camera.getPosition().z + camera.Front.z * 4};
+    Origin origin = {camera.getPosition().x + camera.Front.x * 4, camera.getPosition().y + camera.Front.y * 4, camera.getPosition().z + camera.Front.z * 4};
     auto cube = create_uniform_cube(origin);
     vertices.insert(vertices.end(), cube.begin(), cube.end());
     shader.bind_buffers(vertices);
