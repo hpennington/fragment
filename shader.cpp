@@ -33,19 +33,21 @@ bool Shader::compile_shaders() {
     std::string v_content((std::istreambuf_iterator<char>(v_ifs)), (std::istreambuf_iterator<char>()));
     std::ifstream f_ifs(this->fragment_shader);
     std::string f_content((std::istreambuf_iterator<char>(f_ifs)), (std::istreambuf_iterator<char>()));
+
+    bool compileSuccess = true;
     
     // Compile shaders
     unsigned int vertex = glCreateShader(GL_VERTEX_SHADER);
     const char* v_source = v_content.c_str();
     glShaderSource(vertex, 1, &v_source, NULL);
     glCompileShader(vertex);
-    check_compile_error(vertex);
+    compileSuccess = check_compile_error(vertex);
 
     unsigned int fragment = glCreateShader(GL_FRAGMENT_SHADER);
     const char* f_source = f_content.c_str();
     glShaderSource(fragment, 1, &f_source, NULL);
     glCompileShader(fragment);
-    check_compile_error(fragment);
+    compileSuccess = check_compile_error(fragment);
 
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertex);
@@ -67,7 +69,7 @@ bool Shader::compile_shaders() {
     // Clean up
     glDeleteShader(vertex);
     glDeleteShader(fragment);
-    return (bool)success;
+    return (bool)success && compileSuccess;
 
 }
 

@@ -270,7 +270,11 @@ int main(int argc, char* argv[]) {
     }
 
     // Compile shaders and link buffers
-    shader.compile_shaders();
+    if (!shader.compile_shaders()) {
+        std::cout << "Failed to compile shaders" << std::endl;
+        return -1;
+    }
+    
     shader.bind_buffers(vertices);
 
     glEnable(GL_DEPTH_TEST);
