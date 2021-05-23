@@ -289,18 +289,21 @@ int main(int argc, char* argv[]) {
         lastFrame = currentFrame;
 
         process_input(window);
-        // Rotate model matrix
+
+        // Model matrix
         glm::mat4 trans = glm::mat4(1.0f);
-        // trans = glm::rotate(trans, glm::radians(43.0f), glm::vec3(0.0, 1.0, 0.0));
-        // trans = glm::rotate(trans, glm::radians(-camera.getAngle()), glm::vec3(0.0, 1.0, 0.0));
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "model"), 1, GL_FALSE, glm::value_ptr(trans));
         
+        // Projection matrix
         glm::mat4 projection = glm::mat4(1.0f);
         projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 1000.0f);
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+        // View matrix
         glm::mat4 view = camera.getViewMatrix();
         glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 
+        // Set camera_position for specular highlights
         auto camera_position = camera.getPosition();
         glUniform3fv(glGetUniformLocation(shader.getProgram(), "camera_position"), 1, &camera_position[0]);
 
