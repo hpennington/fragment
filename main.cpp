@@ -164,7 +164,7 @@ std::vector<Vertex> init_world() {
 
     // Create buildings
     for (int i = 0; i < 100; i += 1) {
-        float colorElement = random_float(0.25f, 0.75f);
+        float colorElement = random_float(0.5f, 0.75f);
         color = {colorElement, colorElement, colorElement};
         size = {random_float(30.0f, 80.0f), random_float(10.0f, 100.0f), random_float(30.0f, 80.0f)};
         origin = {random_float(-500.0f, 500.0f), size.y / 2, random_float(-500.0f, 500.0f)};
@@ -274,7 +274,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Failed to compile shaders" << std::endl;
         return -1;
     }
-    
+
     shader.bind_buffers(vertices);
 
     glEnable(GL_DEPTH_TEST);
