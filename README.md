@@ -1,5 +1,5 @@
 # Setup
-##### git clone https://gitlab.com/haydenpennington/fragment.git --recursive
+##### git clone https://github.com/hpennington/fragment.git --recursive
 ##### cmake .
 ##### make && ./Fragment
 
